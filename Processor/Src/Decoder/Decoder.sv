@@ -426,7 +426,8 @@ function automatic void RISCV_EmitJAL(
 
     // 命令の種類
     opInfo.mopType = MOP_TYPE_INT;
-    opInfo.mopSubType.intType = INT_MOP_TYPE_BR;
+    opInfo.mopSubType.intType = isfU.rd == LINK_REGISTER ? INT_MOP_TYPE_DIRECT_CALL
+                                                         : INT_MOP_TYPE_DIRECT_BR; // TODO: alt link register
 
     // 条件コード
     opInfo.cond = COND_AL;
@@ -512,7 +513,9 @@ function automatic void RISCV_EmitJALR(
 
     // 命令の種類
     opInfo.mopType = MOP_TYPE_INT;
-    opInfo.mopSubType.intType = INT_MOP_TYPE_RIJ;
+    opInfo.mopSubType.intType = isfI.rd  == LINK_REGISTER ? INT_MOP_TYPE_INDIRECT_CALL :
+                                isfI.rs1 == LINK_REGISTER ? INT_MOP_TYPE_RETURN
+                                                          : INT_MOP_TYPE_INDIRECT_BR; // TODO: alt link register and coroutine call
 
     // 条件コード
     opInfo.cond = COND_AL;
@@ -602,7 +605,7 @@ function automatic void RISCV_EmitBranch(
 
     // 命令の種類
     opInfo.mopType = MOP_TYPE_INT;
-    opInfo.mopSubType.intType = INT_MOP_TYPE_BR;
+    opInfo.mopSubType.intType = INT_MOP_TYPE_DIRECT_BR;
 
     // 条件コード
     //RISCV_DecodeBrFunct3(isfR.funct3, opInfo.cond);

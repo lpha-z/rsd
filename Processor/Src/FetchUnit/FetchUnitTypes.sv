@@ -44,6 +44,8 @@ typedef struct packed // struct BTB_Entry
     logic [BTB_TAG_WIDTH-1:0] tag;
     BTB_AddrPath data;
     logic isCondBr;
+    logic isRASPushBr;
+    logic isRASPopBr;
 } BTB_Entry;
 
 typedef struct packed // struct PhtQueueEntry
@@ -137,6 +139,8 @@ typedef struct packed // struct BranchResult
     logic execTaken;    // The execution result of a branch's direction.
     logic predTaken;    // The prediction result of a branch's direction.
     logic isCondBr;     // Whether this branch is conditional one or not.
+    logic isRASPushBr;  // Whether this branch is call or not. (TODO: coroutine call)
+    logic isRASPopBr;   // Whether this branch is return one or not. (TODO: coroutine call)
     logic mispred;      // Whether the prediction result of this branch is incorrect.
     logic valid;        // Whether this result is valid or not.
 

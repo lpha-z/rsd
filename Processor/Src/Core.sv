@@ -132,6 +132,7 @@ output
     NextPCStage npStage( npStageIF, ifStageIF, recoveryManagerIF, ctrlIF, debugIF );
         PC pc( npStageIF );
         BTB btb( npStageIF, ifStageIF );
+        RAS ras( npStageIF, ifStageIF );
         BranchPredictor brPred( npStageIF, ifStageIF, ctrlIF );
     FetchStage ifStage( ifStageIF, npStageIF, ctrlIF, debugIF, perfCounterIF );
         ICache iCache( npStageIF, ifStageIF, cacheSystemIF );

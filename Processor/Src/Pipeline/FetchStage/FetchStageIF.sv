@@ -21,6 +21,11 @@ interface FetchStageIF( input logic clk, rst, rstStart );
     PC_Path btbOut[FETCH_WIDTH];
     logic btbHit[FETCH_WIDTH];
     logic readIsCondBr[FETCH_WIDTH];
+    logic readIsRASPushBr[FETCH_WIDTH];
+    logic readIsRASPopBr[FETCH_WIDTH];
+
+    // RAS
+    PC_Path rasOut[FETCH_WIDTH];
     
     // BranchPredictor
     logic updateBrHistory[FETCH_WIDTH];
@@ -63,6 +68,8 @@ interface FetchStageIF( input logic clk, rst, rstStart );
         fetchStagePC,
         btbOut,
         btbHit,
+        readIsRASPopBr,
+        rasOut,
         brPredTaken
     );
 
@@ -84,7 +91,17 @@ interface FetchStageIF( input logic clk, rst, rstStart );
     output
         btbOut,
         btbHit,
-        readIsCondBr
+        readIsCondBr,
+        readIsRASPushBr,
+        readIsRASPopBr
+    );
+
+    modport RAS(
+    input
+        readIsRASPushBr,
+        readIsRASPopBr,
+    output
+        rasOut
     );
 
     modport BranchPredictor(

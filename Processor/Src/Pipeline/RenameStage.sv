@@ -239,7 +239,7 @@ module RenameStage(
                 (opInfo[i].mopSubType.memType == MEM_MOP_TYPE_ENV);
             isBranch[i] =
                 (opInfo[i].mopType == MOP_TYPE_INT) &&
-                (opInfo[i].mopSubType.intType inside {INT_MOP_TYPE_BR, INT_MOP_TYPE_RIJ});
+                (opInfo[i].mopSubType.intType inside {INT_MOP_TYPE_DIRECT_BR, INT_MOP_TYPE_INDIRECT_BR, INT_MOP_TYPE_DIRECT_CALL, INT_MOP_TYPE_INDIRECT_CALL, INT_MOP_TYPE_RETURN, INT_MOP_TYPE_CO_CALL});
         end
 
         for ( int i = 0; i < RENAME_WIDTH; i++ ) begin

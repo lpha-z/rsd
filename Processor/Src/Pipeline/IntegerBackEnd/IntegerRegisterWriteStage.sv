@@ -22,7 +22,7 @@ module IntegerRegisterWriteStage(
     //IntegerRegisterWriteStageIF.ThisStage port,
     IntegerExecutionStageIF.NextStage prev,
     SchedulerIF.IntegerRegisterWriteStage scheduler,
-    NextPCStageIF.IntegerRegisterWriteStage ifStage,
+    NextPCStageIF.IntegerRegisterWriteStage npStage,
     RegisterFileIF.IntegerRegisterWriteStage registerFile,
     ActiveListIF.IntegerRegisterWriteStage activeList,
     RecoveryManagerIF.IntegerRegisterWriteStage recovery,
@@ -98,7 +98,7 @@ module IntegerRegisterWriteStage(
             alWriteData[i].storeQueuePtr = iqData[i].storeQueueRecoveryPtr;
             alWriteData[i].pc = pipeReg[i].brResult.nextAddr;
             alWriteData[i].dataAddr = '0;
-            alWriteData[i].isBranch = (iqData[i].opType inside { INT_MOP_TYPE_BR, INT_MOP_TYPE_RIJ });
+            alWriteData[i].isBranch = (iqData[i].opType inside { INT_MOP_TYPE_DIRECT_BR, INT_MOP_TYPE_INDIRECT_BR, INT_MOP_TYPE_DIRECT_CALL, INT_MOP_TYPE_INDIRECT_CALL, INT_MOP_TYPE_RETURN, INT_MOP_TYPE_CO_CALL});
             alWriteData[i].isStore = FALSE;
 
             // Branch results.
@@ -146,7 +146,7 @@ module IntegerRegisterWriteStage(
             scheduler.intRecordData[i] = pipeReg[i].intQueueData;
         end
 
-        ifStage.brResult = brResult;
+        npStage.brResult = brResult;
 
 
         // Debug Register

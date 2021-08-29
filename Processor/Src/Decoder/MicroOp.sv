@@ -46,8 +46,12 @@ typedef enum logic [2:0]
     INT_MOP_TYPE_ALU       = 3'b000,
     INT_MOP_TYPE_SHIFT     = 3'b001,
 
-    INT_MOP_TYPE_BR        = 3'b010,
-    INT_MOP_TYPE_RIJ       = 3'b011
+    INT_MOP_TYPE_DIRECT_BR     = 3'b010, // CondBr+Jump
+    INT_MOP_TYPE_INDIRECT_BR   = 3'b011, // jr
+    INT_MOP_TYPE_DIRECT_CALL   = 3'b100, // jal
+    INT_MOP_TYPE_INDIRECT_CALL = 3'b101, // jalr
+    INT_MOP_TYPE_RETURN        = 3'b110, // ret
+    INT_MOP_TYPE_CO_CALL       = 3'b111  // TODO: coroutine call
 } IntMicroOpSubType;
 
 typedef enum logic [2:0]

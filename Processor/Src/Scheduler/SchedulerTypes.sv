@@ -100,7 +100,7 @@ typedef struct packed // ActiveListEntry
     
     logic isLoad;
     logic isStore;
-    logic isBranch; // TRUE if the op is BR or RIJ
+    logic isBranch; // TRUE if the op is Bcc/J/JR/JAL/JALR/RET
     logic isEnv;    // TRUE if the op is ECALL/EBREAK
     
     logic last;         // TRUE if this micro-op is the last micro-op in an instruction

@@ -82,6 +82,13 @@ interface NextPCStageIF( input logic clk, rst, rstStart );
         brResult
     );
 
+    modport RAS(
+    input
+        clk,
+        rst,
+        predNextPC
+    );
+
     modport BranchPredictor(
     input
         clk,

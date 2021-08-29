@@ -131,7 +131,6 @@ module IntegerExecutionStage(
 
     // Branch
     logic isBranch [ INT_ISSUE_WIDTH ];
-    logic isJump [ INT_ISSUE_WIDTH ];
     logic brTaken  [ INT_ISSUE_WIDTH ];
     BranchResult brResult [ INT_ISSUE_WIDTH ];
     logic predMiss [ INT_ISSUE_WIDTH ];
@@ -178,7 +177,7 @@ module IntegerExecutionStage(
             INT_MOP_TYPE_ALU:       dataOut[i].data = aluDataOut[i];
             INT_MOP_TYPE_SHIFT:     dataOut[i].data = shiftDataOut[i];
             //INT_MOP_TYPE_BR, INT_MOP_TYPE_RIJ :        dataOut[i].data = ToPC_FromAddr(pc[i] + PC_OPERAND_OFFSET);
-            INT_MOP_TYPE_BR, INT_MOP_TYPE_RIJ :        dataOut[i].data = pc[i] + PC_OPERAND_OFFSET;
+            INT_MOP_TYPE_DIRECT_BR, INT_MOP_TYPE_INDIRECT_BR, INT_MOP_TYPE_DIRECT_CALL, INT_MOP_TYPE_INDIRECT_CALL, INT_MOP_TYPE_RETURN, INT_MOP_TYPE_CO_CALL :        dataOut[i].data = pc[i] + PC_OPERAND_OFFSET;
             default: /* select */  dataOut[i].data = ( isCondEnabled[i] ? fuOpA[i].data : fuOpB[i].data );
             endcase
 
@@ -199,16 +198,16 @@ module IntegerExecutionStage(
             // --- 分岐
             //
             bPred[i] = brSubInfo[i].bPred;
-            isBranch[i] = ( iqData[i].opType inside { INT_MOP_TYPE_BR, INT_MOP_TYPE_RIJ } );
-            isJump[i] = 
-                (iqData[i].opType == INT_MOP_TYPE_BR && iqData[i].cond == COND_AL)
-                    || iqData[i].opType == INT_MOP_TYPE_RIJ;
+            isBranch[i] = ( iqData[i].opType inside { INT_MOP_TYPE_DIRECT_BR, INT_MOP_TYPE_INDIRECT_BR, INT_MOP_TYPE_DIRECT_CALL, INT_MOP_TYPE_INDIRECT_CALL, INT_MOP_TYPE_RETURN, INT_MOP_TYPE_CO_CALL } );
 
             // 分岐orレジスタ間接分岐で，条件が有効ならTaken
             brTaken[i] = pipeReg[i].valid && isBranch[i] && isCondEnabled[i];
 
             // Whether this branch is conditional one or not.
-            brResult[i].isCondBr = !isJump[i];
+            brResult[i].isCondBr = iqData[i].cond != COND_AL;
+            // TODO: coroutine call
+            brResult[i].isRASPushBr = ( iqData[i].opType inside { INT_MOP_TYPE_DIRECT_CALL, INT_MOP_TYPE_INDIRECT_CALL } );
+            brResult[i].isRASPopBr = iqData[i].opType == INT_MOP_TYPE_RETURN;
             
             // The address of a branch.
             brResult[i].brAddr = ToPC_FromAddr(pc[i]);
@@ -217,9 +216,9 @@ module IntegerExecutionStage(
             if( brTaken[i] ) begin
                 brResult[i].nextAddr =
                     ToPC_FromAddr(
-                        (iqData[i].opType == INT_MOP_TYPE_BR) ?  
-                            (pc[i] + ExtendBranchDisplacement(brSubInfo[i].brDisp) ) : // 方向分岐 
-                            (AddJALR_TargetOffset(fuOpA[i].data, brSubInfo[i].brDisp) // レジスタ間接分岐 
+                        (iqData[i].opType inside { INT_MOP_TYPE_DIRECT_BR, INT_MOP_TYPE_DIRECT_CALL }) ?
+                            (pc[i] + ExtendBranchDisplacement(brSubInfo[i].brDisp) ) : // pc-relative
+                            (AddJALR_TargetOffset(fuOpA[i].data, brSubInfo[i].brDisp) // register-indirect
                         ) 
                     );
             end

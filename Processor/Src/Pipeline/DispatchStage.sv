@@ -121,7 +121,7 @@ module DispatchStage(
             brSubInfo[i].operandTypeA = opInfo[i].opTypeA;
             brSubInfo[i].operandTypeB = opInfo[i].opTypeB;
 
-            if ((intEntry[i].opType == INT_MOP_TYPE_BR) || (intEntry[i].opType == INT_MOP_TYPE_RIJ) ) begin
+            if (intEntry[i].opType inside { INT_MOP_TYPE_DIRECT_BR, INT_MOP_TYPE_INDIRECT_BR, INT_MOP_TYPE_DIRECT_CALL, INT_MOP_TYPE_INDIRECT_CALL, INT_MOP_TYPE_RETURN, INT_MOP_TYPE_CO_CALL }) begin
                 intEntry[i].intOpInfo.brSubInfo = brSubInfo[i];
             end
             else begin
