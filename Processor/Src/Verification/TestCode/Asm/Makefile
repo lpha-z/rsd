@@ -26,6 +26,7 @@ SRC_DIRS = \
 	IntDivZynq \
 	DividerTest \
 	Gshare \
+	RAS \
 	Fence \
 	CSR \
 	ENV \
