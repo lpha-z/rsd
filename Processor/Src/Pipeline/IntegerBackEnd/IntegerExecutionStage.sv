@@ -209,6 +209,8 @@ module IntegerExecutionStage(
 
             // Whether this branch is conditional one or not.
             brResult[i].isCondBr = !isJump[i];
+            brResult[i].isRASPushBr = brSubInfo[i].isRASPushBr;
+            brResult[i].isRASPopBr = brSubInfo[i].isRASPopBr;
             
             // The address of a branch.
             brResult[i].brAddr = ToPC_FromAddr(pc[i]);

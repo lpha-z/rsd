@@ -118,6 +118,8 @@ module DispatchStage(
 
             brSubInfo[i].brDisp = opInfo[i].operand.brOp.brDisp;
             brSubInfo[i].bPred = pipeReg[i].brPred;
+            brSubInfo[i].isRASPushBr = opInfo[i].operand.brOp.isRASPushBr;
+            brSubInfo[i].isRASPopBr = opInfo[i].operand.brOp.isRASPopBr;
             brSubInfo[i].operandTypeA = opInfo[i].opTypeA;
             brSubInfo[i].operandTypeB = opInfo[i].opTypeB;
 

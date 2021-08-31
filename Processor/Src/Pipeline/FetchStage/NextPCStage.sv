@@ -173,8 +173,8 @@ module NextPCStage(
                 // the address read from BTB is used as next PC.
                 if (!regStall && fetch.fetchStageIsValid[i] && 
                         fetch.brPredTaken[i]) begin
-                    // Use PC from BTB
-                    predNextPC = fetch.btbOut[i];
+                    // Use PC from BTB or RAS
+                    predNextPC = fetch.readIsRASPopBr[i] ? fetch.rasOut[i] : fetch.btbOut[i];
                     break;
                 end
             end

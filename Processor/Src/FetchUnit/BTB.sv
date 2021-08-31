@@ -26,6 +26,8 @@ module BTB(
     PC_Path btbOut[FETCH_WIDTH];
     logic btbHit[FETCH_WIDTH];
     logic readIsCondBr[FETCH_WIDTH];
+    logic readIsRASPushBr[FETCH_WIDTH];
+    logic readIsRASPopBr[FETCH_WIDTH];
     
     PC_Path pcIn;
     
@@ -112,6 +114,8 @@ module BTB(
             btbHit[i] = btbRV[i].valid && (btbRV[i].tag == ToBTB_Tag(tagReg[i]));
             btbOut[i] = ToRawAddrFromBTB_Addr(btbRV[i].data, tagReg[i]);
             readIsCondBr[i] = btbRV[i].isCondBr;
+            readIsRASPushBr[i] = btbRV[i].isRASPushBr;
+            readIsRASPopBr[i] = btbRV[i].isRASPopBr;
         end
 
         // Write request from IntEx Stage
@@ -122,6 +126,8 @@ module BTB(
             btbWV[i].data = ToBTB_Addr(port.brResult[i].nextAddr);
             btbWV[i].valid = TRUE;
             btbWV[i].isCondBr = port.brResult[i].isCondBr;
+            btbWV[i].isRASPushBr = port.brResult[i].isRASPushBr;
+            btbWV[i].isRASPopBr = port.brResult[i].isRASPopBr;
         end
 
         pushBtbQueue = FALSE;
@@ -198,6 +204,8 @@ module BTB(
         end
 
         fetch.readIsCondBr = readIsCondBr;
+        fetch.readIsRASPushBr = readIsRASPushBr;
+        fetch.readIsRASPopBr = readIsRASPopBr;
         fetch.btbOut = btbOut;
         fetch.btbHit = btbHit;
         

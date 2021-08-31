@@ -435,6 +435,11 @@ function automatic void RISCV_EmitJAL(
     opInfo.operand.brOp.brDisp = GetJAL_Target( isf );
     opInfo.operand.brOp.padding = 0;
 
+    // RAS operations
+    // TODO: alt link register
+    opInfo.operand.brOp.isRASPushBr = ( isfU.rd == LINK_REGISTER ) ? TRUE : FALSE;
+    opInfo.operand.brOp.isRASPopBr = FALSE;
+
     // 未定義命令
     opInfo.unsupported = FALSE;
     opInfo.undefined = FALSE;
@@ -520,6 +525,11 @@ function automatic void RISCV_EmitJALR(
     // 分岐ターゲット
     opInfo.operand.brOp.brDisp = GetJALR_Target( isfI );
     opInfo.operand.brOp.padding = '0;
+
+    // RAS operations
+    // TODO: alt link register and coroutine call
+    opInfo.operand.brOp.isRASPushBr = ( isfI.rd == LINK_REGISTER ) ? TRUE : FALSE;
+    opInfo.operand.brOp.isRASPopBr = ( isfI.rd != LINK_REGISTER && isfI.rs1 == LINK_REGISTER ) ? TRUE : FALSE;
 
     // 未定義命令
     opInfo.unsupported = FALSE;
@@ -612,6 +622,10 @@ function automatic void RISCV_EmitBranch(
     // 分岐ターゲット
     opInfo.operand.brOp.brDisp = GetBranchDisplacement( isfR );
     opInfo.operand.brOp.padding = '0;
+
+    // RAS operations
+    opInfo.operand.brOp.isRASPushBr = FALSE;
+    opInfo.operand.brOp.isRASPopBr = FALSE;
 
     // 未定義命令
     opInfo.unsupported = FALSE;

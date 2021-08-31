@@ -267,6 +267,11 @@ input
         ifStage
     );
 
+    modport RAS(
+    input
+        ifStage
+    );
+
     modport RecoveryManager(
     output
         cmStageFlushUpper

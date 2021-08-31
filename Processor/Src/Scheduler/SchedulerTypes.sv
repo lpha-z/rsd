@@ -155,7 +155,7 @@ endfunction
 localparam INT_SUB_INFO_BIT_WIDTH = 
     $bits(OpOperandType) * 2 + $bits(IntALU_Code) + $bits(ShiftOperandType) + $bits(ShifterPath);
 localparam BR_SUB_INFO_BIT_WIDTH =
-    $bits(OpOperandType) * 2 + $bits(BranchPred) + $bits(BranchDisplacement);
+    $bits(OpOperandType) * 2 + 2 + $bits(BranchPred) + $bits(BranchDisplacement);
     
 localparam INT_SUB_INFO_PADDING_BIT_WIDTH = 
     BR_SUB_INFO_BIT_WIDTH - INT_SUB_INFO_BIT_WIDTH;
@@ -184,6 +184,9 @@ typedef struct packed // BrOpInfo
     // 論理レジスタを読むかどうか
     OpOperandType operandTypeA;
     OpOperandType operandTypeB;
+    // RAS operations
+    logic isRASPushBr;
+    logic isRASPopBr;
 
     BranchPred bPred;
     BranchDisplacement brDisp;        // 分岐ターゲット

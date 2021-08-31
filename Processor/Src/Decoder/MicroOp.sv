@@ -139,14 +139,16 @@ typedef struct packed // MemMicroOpOperand
     AddrOperandImm addrIn;
 } MemMicroOpOperand;
 
-// Branch:6+6+6 +15 +20=53 bits
+// Branch:6+6+6+1+1 +13 +20=53 bits
 typedef struct packed // BrMicroOpOperand
 {
     // 論理レジスタ番号
     LRegNumPath dstRegNum;
     LRegNumPath srcRegNumA;    // レジスタN 相当
     LRegNumPath srcRegNumB;    // 第2オペランド
-    logic [14:0] padding;       // padding
+    logic isRASPushBr;
+    logic isRASPopBr;
+    logic [12:0] padding;       // padding
     BranchDisplacement brDisp;  // Branch offset.
 } BrMicroOpOperand;
 
