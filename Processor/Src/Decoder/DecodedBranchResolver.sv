@@ -31,7 +31,8 @@ output
     logic flushTriggered,
     BranchPred brPredOut[DECODE_WIDTH],
     PC_Path recoveredPC,
-    BranchGlobalHistoryPath recoveredBrHistory
+    BranchGlobalHistoryPath recoveredBrHistory,
+    RAS_CheckpointData recoveredRasCheckpoint
 );
 
     PC_Path decodedPC[DECODE_WIDTH];
@@ -59,6 +60,8 @@ output
         flushTriggered = FALSE;
         recoveredPC = '0;
         recoveredBrHistory = '0;
+        recoveredRasCheckpoint.stackTopPtr = '0;
+        recoveredRasCheckpoint.queueTailPtr = '0;
 
         for (int i = 0; i < DECODE_WIDTH; i++) begin
             insnValidOut[i] = insnValidIn[i];
@@ -160,6 +163,7 @@ output
         end
         recoveredPC = decodedPC[addrCheckLane];
         recoveredBrHistory = brPredIn[addrCheckLane].globalHistory;
+        recoveredRasCheckpoint = brPredIn[addrCheckLane].rasCheckpoint;
 
         if (flushTriggered) begin
             for (int i = 0; i < DECODE_WIDTH; i++) begin

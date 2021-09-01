@@ -99,10 +99,14 @@ interface RecoveryManagerIF( input logic clk, rst );
     // This signal is written back from a write back stage.
     BranchResult brResult[ INT_ISSUE_WIDTH ];
     BranchGlobalHistoryPath recoveredBrHistoryFromRename;
+    RAS_CheckpointData recoveredRasCheckpointFromRename;
 
     BranchGlobalHistoryPath recoveredBrHistoryFromCommitStage;
+    RAS_CheckpointData recoveredRasCheckpointFromCommitStage;
     BranchGlobalHistoryPath recoveredBrHistoryFromRwStage;
+    RAS_CheckpointData recoveredRasCheckpointFromRwStage;
     BranchGlobalHistoryPath recoveredBrHistoryFromRwCommit;
+    RAS_CheckpointData recoveredRasCheckpointFromRwCommit;
 
     modport RecoveryManager(
     input
@@ -123,12 +127,15 @@ interface RecoveryManagerIF( input logic clk, rst );
         flushIQ_Entry,
         recoveryCauseFromCommitStage,
         recoveredBrHistoryFromCommitStage,
+        recoveredRasCheckpointFromCommitStage,
         recoveredBrHistoryFromRwStage,
+        recoveredRasCheckpointFromRwStage,
     output
         phase,
         toRecoveryPhase,
         recoveredPC_FromRwCommit,
         recoveredBrHistoryFromRwCommit,
+        recoveredRasCheckpointFromRwCommit,
         toCommitPhase,
         flushRangeHeadPtr,
         flushRangeTailPtr,
@@ -142,7 +149,8 @@ interface RecoveryManagerIF( input logic clk, rst );
     output
         recoverFromRename,
         recoveredPC_FromRename,
-        recoveredBrHistoryFromRename
+        recoveredBrHistoryFromRename,
+        recoveredRasCheckpointFromRename
     );
 
     modport CommitStage(
@@ -163,9 +171,11 @@ interface RecoveryManagerIF( input logic clk, rst );
         toRecoveryPhase,
         recoveredPC_FromRwCommit,
         recoveredBrHistoryFromRwCommit,
+        recoveredRasCheckpointFromRwCommit,
         recoverFromRename,
         recoveredPC_FromRename,
-        recoveredBrHistoryFromRename
+        recoveredBrHistoryFromRename,
+        recoveredRasCheckpointFromRename
     );
 
     modport RenameLogic(
@@ -375,7 +385,9 @@ interface RecoveryManagerIF( input logic clk, rst );
         recoveredPC_FromRwStage,
         faultingDataAddr,
         recoveredBrHistoryFromCommitStage,
-        recoveredBrHistoryFromRwStage
+        recoveredRasCheckpointFromCommitStage,
+        recoveredBrHistoryFromRwStage,
+        recoveredRasCheckpointFromRwStage
     );
 
     modport InterruptController(

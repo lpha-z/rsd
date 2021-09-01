@@ -84,6 +84,19 @@ function automatic PC_Path ToRawAddrFromBTB_Addr(BTB_AddrPath addr, PC_Path pc);
     };
 endfunction
 
+///
+/// RAS
+//
+
+localparam RAS_ENTRY_NUM = CONF_RAS_ENTRY_NUM;
+localparam RAS_ENTRY_NUM_BIT_WIDTH = $clog2(RAS_ENTRY_NUM);
+typedef logic [RAS_ENTRY_NUM_BIT_WIDTH-1:0] RAS_IndexPath;
+typedef struct packed // struct RAS_CheckpointData
+{
+    RAS_IndexPath stackTopPtr;
+    RAS_IndexPath queueTailPtr;
+} RAS_CheckpointData;
+
 
 //
 // GShare
@@ -146,6 +159,7 @@ typedef struct packed // struct BranchResult
 
     BranchGlobalHistoryPath globalHistory;  // The global history of branches.
     PHT_EntryPath phtPrevValue;             // PHT's counter value
+    RAS_CheckpointData rasCheckpoint;       // RAS's top&tail pointer
 } BranchResult;
 
 typedef struct packed // struct BranchPred
@@ -155,6 +169,7 @@ typedef struct packed // struct BranchPred
     
     BranchGlobalHistoryPath globalHistory;  // The global history of branches.
     PHT_EntryPath phtPrevValue;             // PHT's counter value
+    RAS_CheckpointData rasCheckpoint;       // RAS's top&tail pointer
 } BranchPred;
 
 endpackage : FetchUnitTypes

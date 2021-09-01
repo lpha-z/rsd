@@ -93,6 +93,7 @@ module NextPCStage(
     logic writePC_FromOuter;
     logic recoverBrHistory;
     BranchGlobalHistoryPath recoveredBrHistory;
+    RAS_CheckpointData recoveredRasCheckpoint;
 
     always_ff @(posedge port.clk) begin
         if (port.rst) begin
@@ -147,6 +148,8 @@ module NextPCStage(
     always_comb begin
         recoverBrHistory = FALSE;
         recoveredBrHistory = '0;
+        recoveredRasCheckpoint.stackTopPtr = '0;
+        recoveredRasCheckpoint.queueTailPtr = '0;
 
         // Decide the address to input to the branch predictor
         if (recovery.toRecoveryPhase) begin
@@ -155,12 +158,14 @@ module NextPCStage(
             predNextPC = recovery.recoveredPC_FromRwCommit;
             recoverBrHistory = TRUE;
             recoveredBrHistory = recovery.recoveredBrHistoryFromRwCommit;
+            recoveredRasCheckpoint = recovery.recoveredRasCheckpointFromRwCommit;
         end
         else if (recovery.recoverFromRename) begin
             // Detect branch misprediction in decode stage
             predNextPC = recovery.recoveredPC_FromRename;
             recoverBrHistory = TRUE;
             recoveredBrHistory = recovery.recoveredBrHistoryFromRename;
+            recoveredRasCheckpoint = recovery.recoveredRasCheckpointFromRename;
         end
         else begin
             // Use current PC
@@ -183,6 +188,7 @@ module NextPCStage(
         port.predNextPC = predNextPC;
         port.recoverBrHistory = recoverBrHistory;
         port.recoveredBrHistory = recoveredBrHistory;
+        port.recoveredRasCheckpoint = recoveredRasCheckpoint;
     end
 
 

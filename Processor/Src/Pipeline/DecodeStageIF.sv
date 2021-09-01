@@ -18,6 +18,7 @@ interface DecodeStageIF( input logic clk, rst );
     logic nextFlush;
     AddrPath nextRecoveredPC;
     BranchGlobalHistoryPath nextRecoveredBrHistory;
+    RAS_CheckpointData nextRecoveredRasCheckpoint;
     
     modport ThisStage(
     input 
@@ -27,7 +28,8 @@ interface DecodeStageIF( input logic clk, rst );
         nextStage,
         nextFlush,
         nextRecoveredPC,
-        nextRecoveredBrHistory
+        nextRecoveredBrHistory,
+        nextRecoveredRasCheckpoint
     );
     
     modport NextStage(
@@ -35,7 +37,8 @@ interface DecodeStageIF( input logic clk, rst );
         nextStage,
         nextFlush,
         nextRecoveredPC,
-        nextRecoveredBrHistory
+        nextRecoveredBrHistory,
+        nextRecoveredRasCheckpoint
     );
     
 endinterface : DecodeStageIF

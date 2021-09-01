@@ -5,6 +5,10 @@
 //
 // Return address stack
 //
+// This is a renamed RAS, which performs queue-based recovery.
+// We are building a spaghetti stack on top of the queue structure.
+// Note that the effective RAS depth is variable and not fixed to RAS_ENTRY_NUM.
+//
 
 import BasicTypes::*;
 import MemoryMapTypes::*;
@@ -15,34 +19,45 @@ module RAS(
     FetchStageIF.RAS fetch,
     ControllerIF.RAS ctrl
 );
-    parameter RAS_ENTRY_NUM = CONF_RAS_ENTRY_NUM;
-    typedef logic [$clog2(RAS_ENTRY_NUM)-1 : 0] RAS_IndexPath;
-    PC_Path ras[RAS_ENTRY_NUM];
-    RAS_IndexPath rasPtr;
+    PC_Path ras_value[RAS_ENTRY_NUM];
+    RAS_IndexPath ras_chain[RAS_ENTRY_NUM];
+    RAS_IndexPath stackTopPtr; // ras_value[stackTopPtr] has should-be-poped value
+    RAS_IndexPath queueTailPtr; // ras_value[queueTailPtr] is should-be-pushed position
 
     // Internal
     PC_Path pushValue;
-    RAS_IndexPath nextRAS_Ptr;
     logic pushRAS;
     logic popRAS;
     logic regFetchStall;
 
     // Output
     PC_Path rasOut[FETCH_WIDTH];
+    RAS_CheckpointData rasCheckpoint[FETCH_WIDTH];
 
     always_ff @(posedge port.clk) begin
         if (port.rst) begin
             for (int i = 0; i < RAS_ENTRY_NUM; i++) begin
-                ras[i] <= '0;
+                ras_value[i] <= '0;
+                ras_chain[i] <= '0;
             end
-            rasPtr <= '0;
+            stackTopPtr <= '0;
+            queueTailPtr <= '0;
             regFetchStall <= FALSE;
         end
         else begin
-            if (pushRAS) begin
-                ras[nextRAS_Ptr] <= pushValue;
+            if (port.recoverBrHistory) begin
+                stackTopPtr <= port.recoveredRasCheckpoint.stackTopPtr;
+                queueTailPtr <= port.recoveredRasCheckpoint.queueTailPtr;
             end
-            rasPtr <= nextRAS_Ptr;
+            else if (pushRAS) begin
+                ras_value[queueTailPtr] <= pushValue;
+                ras_chain[queueTailPtr] <= stackTopPtr;
+                stackTopPtr <= queueTailPtr;
+                queueTailPtr <= queueTailPtr + 1;
+            end
+            else if (popRAS) begin
+                stackTopPtr <= ras_chain[stackTopPtr];
+            end
             regFetchStall <= ctrl.ifStage.stall;
         end
     end
@@ -54,6 +69,8 @@ module RAS(
 
         for (int i = 0; i < FETCH_WIDTH; i++) begin
             rasOut[i] = '0;
+            rasCheckpoint[i].stackTopPtr = stackTopPtr;
+            rasCheckpoint[i].queueTailPtr = queueTailPtr;
         end
 
         for (int i = 0; i < FETCH_WIDTH; i++) begin
@@ -64,11 +81,14 @@ module RAS(
             else if (!regFetchStall && fetch.btbHit[i] && fetch.readIsRASPushBr[i]) begin
                 pushRAS = TRUE;
                 pushValue = fetch.fetchStagePC[i] + INSN_BYTE_WIDTH;
+                rasCheckpoint[i].stackTopPtr = queueTailPtr;
+                rasCheckpoint[i].queueTailPtr = queueTailPtr + 1;
                 break;
             end
             else if (!regFetchStall && fetch.btbHit[i] && fetch.readIsRASPopBr[i]) begin
                 popRAS = TRUE;
-                rasOut[i] = ras[rasPtr];
+                rasOut[i] = ras_value[stackTopPtr];
+                rasCheckpoint[i].stackTopPtr = ras_chain[stackTopPtr];
                 break;
             end
             else if (fetch.brPredTaken[i]) begin
@@ -76,16 +96,7 @@ module RAS(
             end
         end
 
-        if (pushRAS) begin
-            nextRAS_Ptr = rasPtr + 1;
-        end
-        else if (popRAS) begin
-            nextRAS_Ptr = rasPtr - 1;
-        end
-        else begin
-            nextRAS_Ptr = rasPtr;
-        end
-
         fetch.rasOut = rasOut;
+        fetch.rasCheckpoint = rasCheckpoint;
     end
 endmodule : RAS

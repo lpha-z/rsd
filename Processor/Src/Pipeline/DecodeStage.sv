@@ -141,6 +141,7 @@ module DecodeStage(
     BranchPred brPredOut[DECODE_WIDTH];
     PC_Path recoveredPC;
     BranchGlobalHistoryPath recoveredBrHistory;
+    RAS_CheckpointData recoveredRasCheckpoint;
 
     always_comb begin
         stallBranchResolver = ctrl.idStage.stall && !ctrl.stallByDecodeStage;
@@ -168,13 +169,15 @@ module DecodeStage(
         .flushTriggered(flushTriggered),
         .brPredOut(brPredOut),
         .recoveredPC(recoveredPC),
-        .recoveredBrHistory(recoveredBrHistory)
+        .recoveredBrHistory(recoveredBrHistory),
+        .recoveredRasCheckpoint(recoveredRasCheckpoint)
     );
     
     always_comb begin
         port.nextFlush = complete && flushTriggered && !clear;
         port.nextRecoveredPC = recoveredPC;
         port.nextRecoveredBrHistory = recoveredBrHistory;
+        port.nextRecoveredRasCheckpoint = recoveredRasCheckpoint;
     end
     
     AllDecodedMicroOpPath remainingValidMOps;

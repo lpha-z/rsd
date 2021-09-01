@@ -125,6 +125,7 @@ module RenameStage(
     logic regFlush;
     PC_Path regRecoveredPC;
     BranchGlobalHistoryPath regRecoveredBrHistory;
+    RAS_CheckpointData regRecoveredRasCheckpoint;
 
 
 `ifndef RSD_SYNTHESIS
@@ -148,12 +149,15 @@ module RenameStage(
             regFlush <= '0;
             regRecoveredPC <= '0;
             regRecoveredBrHistory <= '0;
+            regRecoveredRasCheckpoint.stackTopPtr <= '0;
+            regRecoveredRasCheckpoint.queueTailPtr <= '0;
         end
         else if(!ctrl.rnStage.stall) begin             // write data
             pipeReg <= prev.nextStage;
             regFlush <= prev.nextFlush;
             regRecoveredPC <= prev.nextRecoveredPC;
             regRecoveredBrHistory <= prev.nextRecoveredBrHistory;
+            regRecoveredRasCheckpoint <= prev.nextRecoveredRasCheckpoint;
         end
     end
 
@@ -161,6 +165,7 @@ module RenameStage(
         recovery.recoverFromRename = regFlush;
         recovery.recoveredPC_FromRename = regRecoveredPC;
         recovery.recoveredBrHistoryFromRename = regRecoveredBrHistory;
+        recovery.recoveredRasCheckpointFromRename = regRecoveredRasCheckpoint;
         ctrl.rnStageFlushUpper = regFlush;
     end
 

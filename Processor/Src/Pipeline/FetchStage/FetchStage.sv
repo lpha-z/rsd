@@ -123,6 +123,7 @@ module FetchStage(
             brPred[i].predTaken = port.brPredTaken[i];
             brPred[i].globalHistory = port.brGlobalHistory[i];
             brPred[i].phtPrevValue = port.phtPrevValue[i];
+            brPred[i].rasCheckpoint = port.rasCheckpoint[i];
         end
 
         // Check whether instructions are flushed by branch prediction

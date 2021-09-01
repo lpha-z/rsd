@@ -25,6 +25,7 @@ interface NextPCStageIF( input logic clk, rst, rstStart );
     BranchResult brResult[ INT_ISSUE_WIDTH ];
     logic recoverBrHistory;
     BranchGlobalHistoryPath recoveredBrHistory;
+    RAS_CheckpointData recoveredRasCheckpoint;
 
 
     // Interrupt
@@ -59,7 +60,8 @@ interface NextPCStageIF( input logic clk, rst, rstStart );
         icNextReadAddrIn,
         nextStage,
         recoverBrHistory,
-        recoveredBrHistory
+        recoveredBrHistory,
+        recoveredRasCheckpoint
     );
 
     modport NextStage(
@@ -86,7 +88,9 @@ interface NextPCStageIF( input logic clk, rst, rstStart );
     input
         clk,
         rst,
-        predNextPC
+        predNextPC,
+        recoverBrHistory,
+        recoveredRasCheckpoint
     );
 
     modport BranchPredictor(
