@@ -49,6 +49,9 @@ typedef uint32_t LED_Path;
 typedef uint32_t SerialDataPath;
 typedef uint32_t InsnPath;
 typedef uint32_t PC_Path;
+typedef uint32_t BranchGlobalHistoryPath;
+typedef uint32_t PHT_IndexPath;
+typedef uint32_t PHT_EntryPath;
 
 typedef uint32_t OpSerial;
 typedef uint32_t MicroOpIndex;
@@ -101,6 +104,9 @@ struct FetchStageDebugRegister{
     OpSerial sid;
     bool flush;
     bool icMiss;
+    BranchGlobalHistoryPath gHist;
+    PHT_IndexPath phtIndex;
+    PHT_EntryPath phtValue;
 };
 
 struct PreDecodeStageDebugRegister{ // PreDecodeStageDebugRegister
@@ -436,6 +442,9 @@ static void GetDebugRegister(DebugRegister* d, VMain_Zynq_Wrapper *top)
     RSD_MAKE_DEBUG_REG_STAGE_ACCESSOR(DebugRegister, ifReg, OpSerial, sid);
     RSD_MAKE_DEBUG_REG_STAGE_ACCESSOR(DebugRegister, ifReg, logic, flush);
     RSD_MAKE_DEBUG_REG_STAGE_ACCESSOR(DebugRegister, ifReg, logic, icMiss);
+    RSD_MAKE_DEBUG_REG_STAGE_ACCESSOR(DebugRegister, ifReg, BranchGlobalHistoryPath, gHist);
+    RSD_MAKE_DEBUG_REG_STAGE_ACCESSOR(DebugRegister, ifReg, PHT_IndexPath, phtIndex);
+    RSD_MAKE_DEBUG_REG_STAGE_ACCESSOR(DebugRegister, ifReg, PHT_EntryPath, phtValue);
 
     RSD_MAKE_DEBUG_REG_STAGE_ACCESSOR(DebugRegister, pdReg, logic, valid);
     RSD_MAKE_DEBUG_REG_STAGE_ACCESSOR(DebugRegister, pdReg, OpSerial, sid);

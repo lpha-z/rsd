@@ -31,6 +31,7 @@ import DebugTypes::*;
 import BasicTypes::*;
 import OpFormatTypes::*;
 import MicroOpTypes::*;
+import FetchUnitTypes::*;
 import RenameLogicTypes::*;
 import SchedulerTypes::*;
 import LoadStoreUnitTypes::*;
@@ -109,6 +110,9 @@ import MemoryMapTypes::*;
 `RSD_MAKE_DEBUG_REG_STAGE_ACCESSOR(DebugRegister, ifReg, OpSerial, sid);
 `RSD_MAKE_DEBUG_REG_STAGE_ACCESSOR(DebugRegister, ifReg, logic, flush);
 `RSD_MAKE_DEBUG_REG_STAGE_ACCESSOR(DebugRegister, ifReg, logic, icMiss);
+`RSD_MAKE_DEBUG_REG_STAGE_ACCESSOR(DebugRegister, ifReg, BranchGlobalHistoryPath, gHist);
+`RSD_MAKE_DEBUG_REG_STAGE_ACCESSOR(DebugRegister, ifReg, PHT_IndexPath, phtIndex);
+`RSD_MAKE_DEBUG_REG_STAGE_ACCESSOR(DebugRegister, ifReg, PHT_EntryPath, phtValue);
 
 `RSD_MAKE_DEBUG_REG_STAGE_ACCESSOR(DebugRegister, pdReg, logic, valid);
 `RSD_MAKE_DEBUG_REG_STAGE_ACCESSOR(DebugRegister, pdReg, OpSerial, sid);

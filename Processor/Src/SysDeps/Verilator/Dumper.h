@@ -174,7 +174,14 @@ public:
         }
 
         for (int i = 0; i < FETCH_WIDTH; i++) {
-            str = debugRegister.ifReg[i].icMiss ? "i-cache-miss\\n" : "";
+            str = FormatString(
+                "%sPHT[%x]=%s gHistForRecov=%s\\n",
+                debugRegister.ifReg[i].icMiss ? "i-cache-miss " : "",
+                debugRegister.ifReg[i].phtIndex,
+                Bin2Str(debugRegister.ifReg[i].phtValue, 2, true).c_str(),
+                Bin2Str(debugRegister.ifReg[i].gHist, 10, true).c_str()
+            );
+
             DumpStage(
                 KS_IF, // stage id
                 debugRegister.ifReg[i].valid, // valid

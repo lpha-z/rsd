@@ -13,6 +13,7 @@ import BasicTypes::*;
 import MemoryMapTypes::*;
 import OpFormatTypes::*;
 import MicroOpTypes::*;
+import FetchUnitTypes::*;
 import RenameLogicTypes::*;
 import SchedulerTypes::*;
 import LoadStoreUnitTypes::*;
@@ -48,6 +49,9 @@ typedef struct packed { // FetchStageDebugRegister
     OpSerial sid;
     logic flush;
     logic icMiss;
+    BranchGlobalHistoryPath gHist;
+    PHT_IndexPath phtIndex;
+    PHT_EntryPath phtValue;
 } FetchStageDebugRegister;
 
 typedef struct packed { // PreDecodeStageDebugRegister

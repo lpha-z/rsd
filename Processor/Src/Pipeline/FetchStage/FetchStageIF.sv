@@ -26,6 +26,7 @@ interface FetchStageIF( input logic clk, rst, rstStart );
     logic updateBrHistory[FETCH_WIDTH];
     logic brPredTaken[FETCH_WIDTH];
     BranchGlobalHistoryPath brGlobalHistory[FETCH_WIDTH];
+    PHT_IndexPath phtIndex[FETCH_WIDTH];
     PHT_EntryPath phtPrevValue[FETCH_WIDTH];
 
     // I-Cache
@@ -47,6 +48,7 @@ interface FetchStageIF( input logic clk, rst, rstStart );
         btbHit,
         brPredTaken,
         brGlobalHistory,
+        phtIndex,
         phtPrevValue,
     output
         fetchStageIsValid,
@@ -96,6 +98,7 @@ interface FetchStageIF( input logic clk, rst, rstStart );
     output
         brPredTaken,
         brGlobalHistory,
+        phtIndex,
         phtPrevValue
     );
 

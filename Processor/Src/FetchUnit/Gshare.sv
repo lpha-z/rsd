@@ -23,7 +23,9 @@ module Gshare(
                 PHT_ENTRY_NUM_BIT_WIDTH + INSN_ADDR_BIT_WIDTH - 1: 
                 INSN_ADDR_BIT_WIDTH
             ];
-        phtIndex[PHT_ENTRY_NUM_BIT_WIDTH - 1 : PHT_ENTRY_NUM_BIT_WIDTH - BRANCH_GLOBAL_HISTORY_BIT_WIDTH] ^= gh;
+        for (int i = 0; i < BRANCH_GLOBAL_HISTORY_BIT_WIDTH; ++i) begin
+            phtIndex[PHT_ENTRY_NUM_BIT_WIDTH - 1 - i] ^= gh[i];
+        end
         return phtIndex;
     endfunction
 
@@ -33,6 +35,7 @@ module Gshare(
     // Use combinational logic
     logic brPredTaken[FETCH_WIDTH];
     logic updateHistory[FETCH_WIDTH];
+    PHT_IndexPath phtIndex[FETCH_WIDTH];
 
     // Logic for read/write PHT
     logic phtWE[INT_ISSUE_WIDTH];
@@ -114,6 +117,8 @@ module Gshare(
             regHasMispred <= hasMispred;
         end
 
+        phtIndex = phtRA;
+
         // Push Pht Queue
         if (pushPhtQueue) begin
             phtQueue[tailPtr] <= phtQueueWV;
@@ -132,12 +137,13 @@ module Gshare(
 
         for (int i = 0; i < FETCH_WIDTH; i++) begin
             brPredTaken[i] = FALSE;
-            // Output global history to pipeline for recovery.
-            brGlobalHistory[i] = regBrGlobalHistory;
             updateHistory[i] = FALSE;
         end
 
         for (int i = 0; i < FETCH_WIDTH; i++) begin
+            // Output global history to pipeline for recovery.
+            brGlobalHistory[i] = nextBrGlobalHistory;
+
             // Predict directions (Check the MSB).
             brPredTaken[i] = fetch.btbHit[i] && 
                 (phtRV[i][PHT_ENTRY_WIDTH - 1] || !fetch.readIsCondBr[i]);
@@ -159,6 +165,7 @@ module Gshare(
             end
         end
         
+        fetch.phtIndex = phtIndex;
         fetch.phtPrevValue = phtRV;
         fetch.brPredTaken = brPredTaken;
         fetch.brGlobalHistory = brGlobalHistory;
@@ -166,10 +173,7 @@ module Gshare(
         // Write request from IntEx Stage
         for (int i = 0; i < INT_ISSUE_WIDTH; i++) begin
             phtWE[i] = port.brResult[i].valid;
-            phtWA[i] = ToPHT_Index_Global(
-                port.brResult[i].brAddr,
-                port.brResult[i].globalHistory
-            );
+            phtWA[i] = port.brResult[i].phtIndex;
 
             // Counter's value.
             phtPrevValue[i] = port.brResult[i].phtPrevValue; 

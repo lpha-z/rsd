@@ -121,6 +121,7 @@ module FetchStage(
                 port.btbOut[i] : pipeReg[i].pc + INSN_BYTE_WIDTH;
             brPred[i].predTaken = port.brPredTaken[i];
             brPred[i].globalHistory = port.brGlobalHistory[i];
+            brPred[i].phtIndex = port.phtIndex[i];
             brPred[i].phtPrevValue = port.phtPrevValue[i];
         end
 
@@ -194,6 +195,9 @@ module FetchStage(
             debug.ifReg[i].sid = pipeReg[i].sid;
             debug.ifReg[i].flush = isFlushed[i];
             debug.ifReg[i].icMiss = FALSE;
+            debug.ifReg[i].gHist = brPred[i].globalHistory;
+            debug.ifReg[i].phtIndex = brPred[i].phtIndex;
+            debug.ifReg[i].phtValue = brPred[i].phtPrevValue;
         end
         // it is correct that the index of pipeReg is zero because
         // an i-cache miss occurs at the head of the fetch group.

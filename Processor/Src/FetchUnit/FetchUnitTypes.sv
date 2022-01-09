@@ -141,6 +141,7 @@ typedef struct packed // struct BranchResult
     logic valid;        // Whether this result is valid or not.
 
     BranchGlobalHistoryPath globalHistory;  // The global history of branches.
+    PHT_IndexPath phtIndex;                 // PHT index used for update
     PHT_EntryPath phtPrevValue;             // PHT's counter value
 } BranchResult;
 
@@ -150,6 +151,7 @@ typedef struct packed // struct BranchPred
     logic predTaken;                        // result of bpred
     
     BranchGlobalHistoryPath globalHistory;  // The global history of branches.
+    PHT_IndexPath phtIndex;                 // PHT index used for the prediction
     PHT_EntryPath phtPrevValue;             // PHT's counter value
 } BranchPred;
 
